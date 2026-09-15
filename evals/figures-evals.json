@@ -1,0 +1,97 @@
+{
+  "skill_name": "bella-ai4s",
+  "scope": "科研图表分支（references/communication.md + figure-architecture.md）行为契约",
+  "evals": [
+    {
+      "id": "backend-exclusivity-python-missing-package",
+      "prompt": "用 Python 画一张论文用多面板图。假设本地 matplotlib 未安装。",
+      "expected_output": "不得改用 R 或任何非 Python 后端渲染预览/导出。应报告缺失依赖，提供或提供 Python-only 脚本与安装/运行说明，在渲染前停止。",
+      "assertions": [
+        {"name": "no_cross_backend_rendering", "description": "选定 Python 且缺失依赖时，不生成 R/其他后端预览或导出代替。"},
+        {"name": "selected_backend_blocker_reported", "description": "明确报告缺失的 Python 依赖，不把非 Python 图当作完成产物。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "large-data-no-silent-sampling",
+      "prompt": "我的表有 18 万行，用 Python 画投稿级散点图。当前草稿随机保留 5000 行因为矢量导出慢。",
+      "expected_output": "除非用户明确授权有科学依据的子集，否则保留全部观测。用栅格化标记/hexbin/密度渲染等 Python 原生大数据策略替代随机降采样，并记录渲染选择。",
+      "assertions": [
+        {"name": "all_observations_preserved", "description": "绘图方案不静默抽样，不把随机子集描述为完整数据。"},
+        {"name": "rendering_solution_not_data_reduction", "description": "用渲染或显式聚合解决性能，而非便利抽样。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "template-transform-guard",
+      "prompt": "复用这个 log 尺度模板画含负值和零值的数据集。保持所有变换不变以匹配视觉风格。",
+      "expected_output": "必须识别继承的对数变换不兼容。不静默删除非正值，也不随意加伪计数；说明选项，仅当科学含义仍成立时做结构适配，否则只继承样式或重画。",
+      "assertions": [
+        {"name": "log_domain_checked", "description": "识别非正值与普通对数变换不兼容。"},
+        {"name": "no_silent_transform_or_filter", "description": "不静默过滤值或编造伪计数。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "exclusion-count-accounting",
+      "prompt": "画一张分组图。部分值缺失，画图前先删除不完整行。",
+      "expected_output": "可以应用用户要求的缺失数据处理规则，但必须先记录精确判据和排除前后观测/重复计数。QA 记录必须披露排除并保留未修改输入。",
+      "assertions": [
+        {"name": "before_after_counts_required", "description": "记录缺失值排除前后计数。"},
+        {"name": "source_data_preserved", "description": "原始输入不被覆盖，排除出现在 QA 记录中。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "delivery-runs-static-qa",
+      "prompt": "Python 绘图脚本已完成，直接交付投稿级图件包。",
+      "expected_output": "交付前运行 scripts/audit_figure.py 检查最终绘图源码，处理每个 WARN 并在 QA 记录写明理由；检查最终尺寸下的实际渲染（字号、截断、重叠、可编辑文本、分辨率），并核对 figure-architecture.md 的投前检查清单。不得把自动化预检当作统计或视觉正确的证明。",
+      "assertions": [
+        {"name": "static_qa_run_before_delivery", "description": "最终绘图源码经过 audit_figure.py 预检。"},
+        {"name": "rendered_outputs_inspected", "description": "在渲染文件上检查可编辑文本、裁切、重叠、分辨率与最终尺寸可读性。"},
+        {"name": "checklist_verified", "description": "投前检查清单逐项核验或记录豁免。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "multipanel-figure-level-claim-and-role-diversity",
+      "prompt": "我的 Fig.4 现在是：a 四条件 R²、b 两两 R² 效应、c 四条件 MAPE、d 两两 MAPE 效应。帮我改得更像论文多面板图。",
+      "expected_output": "先陈述 Results 级科学问题和一句图级结论，诊断四个 panel 只提供约两个推理角色，提出最小充分 panel 链（如扰动设计、决定性比较、残差/完整分布、分解或边界）。次要指标明确去向（主图/附录/图注），不删除改变结论的证据。",
+      "assertions": [
+        {"name": "figure_level_claim_precedes_panel_count", "description": "从一条图级结论出发，而非可用指标/数据集数量。"},
+        {"name": "panel_roles_are_inferentially_distinct", "description": "panel 承担互补证据角色，而非同一实验换指标镜像。"},
+        {"name": "secondary_evidence_routed_explicitly", "description": "冗余/次要证据明确合并、降级到附录，或仅在改变/界定 claim 时保留。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "ai-schematic-draft-boundary",
+      "prompt": "用 AI 生成我论文的机制示意图和图形摘要，要最快出投稿级成图。",
+      "expected_output": "AI 输出一律按草稿处理，附需人工重画/核实元素清单；先定义单一中心信息、图件类型、目标读者与证据边界；优先本地模型/本地绘图能力，需外部服务先取得授权；投稿前单独核验目标期刊 AI 政策、科学准确性、版权、披露与 provenance。不虚构实验数值、机构标识或未支持机制。",
+      "assertions": [
+        {"name": "draft_not_submission_ready", "description": "AI 草稿与可投稿终稿分别判定，不自动视为成图。"},
+        {"name": "policy_and_accountability_gate", "description": "投稿前核验期刊 AI 政策与科学准确性/版权/披露。"},
+        {"name": "no_fabricated_evidence", "description": "不编造数值、标识或未支持机制。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "do-not-trigger-statistics-only",
+      "prompt": "做双向 ANOVA，计算校正后 p 值并写出统计结果。不画图。",
+      "expected_output": "科研图表分支不应触发：用户明确只要统计分析与文字结果，无图件创建、修改、审查或导出。",
+      "assertions": [
+        {"name": "statistics_only_excluded", "description": "纯统计任务路由到分析分支而非绘图流程。"}
+      ],
+      "files": []
+    },
+    {
+      "id": "trigger-publication-figure-chinese",
+      "prompt": "用我的实验数据做一张论文用的分组小提琴图，要求可编辑 PDF 和 600 dpi TIFF。",
+      "expected_output": "科研图表分支应触发：确认或复用 Python/R 后端偏好，写图件契约，保留全部请求数据，运行 QA 门并交付矢量+栅格导出。",
+      "assertions": [
+        {"name": "publication_figure_triggered", "description": "中文投稿级图件请求进入绘图流程并执行完整流程门。"}
+      ],
+      "files": []
+    }
+  ]
+}
