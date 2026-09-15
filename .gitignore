@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+!.env.example
+.venv/
+.bella-ai4s/
+memory.json
+memory.json.lock
+research_state.md
+evidence.json
+experiments.jsonl
+output/
+tmp/

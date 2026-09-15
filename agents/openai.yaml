@@ -1,0 +1,4 @@
+interface:
+  display_name: "bella-AI4S"
+  short_description: "跨学科科研助手，按场景记忆习惯，衔接研究、实验、写作与可视化"
+  default_prompt: "使用 $bella-ai4s，结合我的课题、材料与相关记忆完成本轮任务，提醒关键科研缺口并更新必要记忆。"
